@@ -2306,6 +2306,118 @@
                 alertToast("אירעה שגיאה בחיבור לגיליון. מומלץ להשתמש בכפתור הדוא\"ל כחלופה.");
             });
         }
+
+        // ===== AUDIO NARRATION (Text-to-Speech) =====
+        (function () {
+            const synth = window.speechSynthesis;
+            if (!synth) return;
+
+            let queue = [];
+            let qIndex = 0;
+            let current = null;
+            let playing = false;
+
+            const style = document.createElement('style');
+            style.textContent = `
+                .tts-highlight { background: #fef3c7; box-shadow: 0 0 0 4px #fef3c7; border-radius: 4px; transition: background .2s; }
+                #ttsBar { position: fixed; bottom: 16px; left: 16px; z-index: 60; display: flex; gap: 6px; align-items: center;
+                          background: #0f172a; color: #fff; padding: 8px 12px; border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 12px; }
+                #ttsBar button { background: rgba(255,255,255,.12); border: 0; color: #fff; width: 32px; height: 32px; border-radius: 999px; cursor: pointer; }
+                #ttsBar button:hover { background: rgba(255,255,255,.25); }
+            `;
+            document.head.appendChild(style);
+
+            const bar = document.createElement('div');
+            bar.id = 'ttsBar';
+            bar.dir = 'rtl';
+            bar.innerHTML = `
+                <span class="font-bold"><i class="fa-solid fa-headphones"></i> האזנה</span>
+                <button id="ttsPlay" title="הקראה של הפרק הנוכחי"><i class="fa-solid fa-play"></i></button>
+                <button id="ttsStop" title="עצירה"><i class="fa-solid fa-stop"></i></button>
+            `;
+            document.body.appendChild(bar);
+
+            function pickVoice() {
+                const voices = synth.getVoices() || [];
+                return voices.find(v => /^he/i.test(v.lang)) || voices.find(v => /iw/i.test(v.lang)) || null;
+            }
+
+            function visibleSection() {
+                const welcome = document.getElementById('welcomeScreen');
+                if (welcome && !welcome.classList.contains('hidden')) return welcome;
+                return document.querySelector('.tab-content:not(.hidden)') || document.body;
+            }
+
+            function buildQueue() {
+                const root = visibleSection();
+                const els = Array.from(root.querySelectorAll('h1,h2,h3,h4,h5,p,li,button span'));
+                return els.filter(el => {
+                    if (el.closest('.hidden')) return false;
+                    if (!el.offsetParent && el !== root) return false;
+                    const t = (el.textContent || '').trim();
+                    return t.length > 1;
+                }).map(el => ({ el, text: el.textContent.trim() }));
+            }
+
+            function clearHighlight() {
+                document.querySelectorAll('.tts-highlight').forEach(e => e.classList.remove('tts-highlight'));
+            }
+
+            function speakNext() {
+                if (qIndex >= queue.length) { stop(); return; }
+                const item = queue[qIndex];
+                clearHighlight();
+                item.el.classList.add('tts-highlight');
+                item.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                const u = new SpeechSynthesisUtterance(item.text);
+                u.lang = 'he-IL';
+                const v = pickVoice();
+                if (v) u.voice = v;
+                u.rate = 0.95;
+                u.onend = () => { if (playing) { qIndex++; speakNext(); } };
+                u.onerror = () => { if (playing) { qIndex++; speakNext(); } };
+                current = u;
+                synth.speak(u);
+            }
+
+            function setIcon(isPlaying) {
+                document.querySelector('#ttsPlay i').className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+            }
+
+            function stop() {
+                playing = false;
+                synth.cancel();
+                clearHighlight();
+                queue = [];
+                qIndex = 0;
+                setIcon(false);
+            }
+
+            document.getElementById('ttsPlay').addEventListener('click', () => {
+                if (playing) {
+                    if (synth.speaking && !synth.paused) { synth.pause(); setIcon(false); }
+                    else { synth.resume(); setIcon(true); }
+                    return;
+                }
+                queue = buildQueue();
+                qIndex = 0;
+                if (!queue.length) return;
+                playing = true;
+                setIcon(true);
+                speakNext();
+            });
+
+            document.getElementById('ttsStop').addEventListener('click', stop);
+
+            // Stop narration when moving between chapters
+            if (typeof window.switchTab === 'function') {
+                const origSwitch = window.switchTab;
+                window.switchTab = function () { stop(); return origSwitch.apply(this, arguments); };
+            }
+            window.addEventListener('beforeunload', () => synth.cancel());
+            if (typeof synth.onvoiceschanged !== 'undefined') synth.onvoiceschanged = pickVoice;
+        })();
     </script>
 </body>
 </html>
