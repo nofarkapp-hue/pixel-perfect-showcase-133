@@ -2363,6 +2363,14 @@
                 document.querySelectorAll('.tts-highlight').forEach(e => e.classList.remove('tts-highlight'));
             }
 
+            // ההקראה לא מדייקת עם לוכסני זכר/נקבה — משמיעים רק את צורת הזכר
+            function speechText(text) {
+                return text
+                    .replace(/([\u0590-\u05FF]{2,})\/[\u0590-\u05FF]{1,10}/g, '$1')
+                    .replace(/\s{2,}/g, ' ')
+                    .trim();
+            }
+
             function speakNext() {
                 if (qIndex >= queue.length) { stop(); return; }
                 const item = queue[qIndex];
@@ -2370,7 +2378,8 @@
                 item.el.classList.add('tts-highlight');
                 item.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                const u = new SpeechSynthesisUtterance(item.text);
+                const u = new SpeechSynthesisUtterance(speechText(item.text));
+
                 u.lang = 'he-IL';
                 const v = pickVoice();
                 if (v) u.voice = v;
