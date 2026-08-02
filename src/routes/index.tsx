@@ -1,24 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: 'לומדת נגישות ושירות מכיל - מיזם הקשב"ה' },
+      {
+        name: "description",
+        content:
+          "לומדה אינטראקטיבית לשירות מכיל ונגישות: תיאוריה, סימולציות, בוחן ותעודה.",
+      },
+      { property: "og:title", content: 'לומדת נגישות ושירות מכיל - הקשב"ה' },
+      {
+        property: "og:description",
+        content: "לומדה אינטראקטיבית לשירות מכיל ונגישות לעסקים ולנותני שירות.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
+    <main className="h-screen w-full">
+      <h1 className="sr-only">לומדת נגישות ושירות מכיל - מיזם הקשב"ה</h1>
+      <iframe
+        src="/learner.html"
+        title='לומדת נגישות ושירות מכיל - מיזם הקשב"ה'
+        className="h-full w-full border-0"
       />
-    </div>
+    </main>
   );
 }
