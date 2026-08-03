@@ -2366,6 +2366,10 @@
             // ההקראה לא מדייקת עם לוכסני זכר/נקבה — משמיעים רק את צורת הזכר
             function speechText(text) {
                 return text
+                    // הגייה נכונה של ראשי התיבות הקשב"ה / קשב"ה
+                    .replace(/ה?קשב["\u05F4'\u05F3]ה/g, function (m) {
+                        return m.charAt(0) === 'ה' && m.length > 5 ? 'הקשבה' : 'קשבה';
+                    })
                     .replace(/([\u0590-\u05FF]{2,})\/[\u0590-\u05FF]{1,10}/g, '$1')
                     .replace(/\s{2,}/g, ' ')
                     .trim();
