@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "pixel-perfect-pixel",
+      "version": "0.1.0",
+      "title": "Pixel Perfect Pixel"
+    },
+    "tools": [
+      {
+        "name": "list_chapters",
+        "title": "List learning chapters",
+        "description": "List the chapters of the Hakshava accessibility & inclusive-service learning module, with their IDs and titles.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "chapters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "title"
+                ]
+              }
+            }
+          },
+          "required": [
+            "chapters"
+          ]
+        }
+      },
+      {
+        "name": "get_chapter",
+        "title": "Get chapter content",
+        "description": "Get the full Hebrew text of one chapter of the learning module. Use list_chapters first to find valid IDs.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Chapter ID, e.g. 'intro', 'theory', 'story3'."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "chapter": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "text"
+              ]
+            }
+          },
+          "required": [
+            "chapter"
+          ]
+        }
+      },
+      {
+        "name": "search_content",
+        "title": "Search learning content",
+        "description": "Search the learning module's Hebrew text for a phrase and return matching snippets with their chapter.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Text to search for (Hebrew or English)."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chapterId": {
+                    "type": "string"
+                  },
+                  "chapterTitle": {
+                    "type": "string"
+                  },
+                  "snippet": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "chapterId",
+                  "chapterTitle",
+                  "snippet"
+                ]
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        }
+      }
+    ]
+  }
+}
