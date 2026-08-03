@@ -1010,7 +1010,7 @@
                         <button onclick="answerSim3(1, 'א', 'high', '😣', 'התעלמות מסימני אי-נוחות ברורים מפספסת הזדמנות פשוטה לעזור, בלי שום עלות לעסק.')" class="sim-opt-btn w-full p-3 text-right text-xs rounded-lg border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-between">
                             <span class="font-normal text-slate-700">א. להוביל אותן ישר לשולחן ליד החלון כי זה היחיד הפנוי, בלי לשים לב להיסוס שלה.</span>
                         </button>
-                        <button onclick="answerSim3(1, 'ב', 'low', '🙂', 'מעולה! שימת לב שקטה נותנת לה אפשרות לבחור מה שנוח לה בלי להסביר כלום - וגם כשאין ממש חלופה בשטח, כנות ואדיבות עושות את ההבדל, והזמנה לתאם מראש בפעם הבאה מראה שהעסק חושב על זה מראש ולא רק \"מאלתר\" ברגע.')" class="sim-opt-btn w-full p-3 text-right text-xs rounded-lg border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-between">
+                        <button onclick="answerSim3(1, 'ב', 'low', '🙂', 'מעולה! שימת לב שקטה נותנת לה אפשרות לבחור מה שנוח לה בלי להסביר כלום - וגם כשאין ממש חלופה בשטח, כנות ואדיבות עושות את ההבדל, והזמנה לתאם מראש בפעם הבאה מראה שהעסק חושב על זה מראש ולא רק &quot;מאלתר&quot; ברגע.')" class="sim-opt-btn w-full p-3 text-right text-xs rounded-lg border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-between">
                             <span class="font-normal text-slate-700">ב. לשים לב להיסוס ולהציע בשקט חלופה אם יש (למשל פינה אחרת או כרית). אם אין כרגע שום פתרון זמין - להתנצל בפשטות ולהזכיר שבפעם הבאה אפשר להתקשר מראש ולתאם ישיבה נוחה יותר.</span>
                         </button>
                         <button onclick="answerSim3(1, 'ג', 'med', '😳', 'הכוונה טובה, אבל הצעת עזרה בקול רם מול כל החברות שמה זרקור על ההבדל שלה במקום לטפל בו בעדינות - וזה בדיוק מה שרותם מנסה להימנע ממנו.')" class="sim-opt-btn w-full p-3 text-right text-xs rounded-lg border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-between">
@@ -2366,6 +2366,10 @@
             // ההקראה לא מדייקת עם לוכסני זכר/נקבה — משמיעים רק את צורת הזכר
             function speechText(text) {
                 return text
+                    // הגייה נכונה של ראשי התיבות הקשב"ה / קשב"ה
+                    .replace(/ה?קשב["\u05F4'\u05F3]ה/g, function (m) {
+                        return m.charAt(0) === 'ה' && m.length > 5 ? 'הקשבה' : 'קשבה';
+                    })
                     .replace(/([\u0590-\u05FF]{2,})\/[\u0590-\u05FF]{1,10}/g, '$1')
                     .replace(/\s{2,}/g, ' ')
                     .trim();
