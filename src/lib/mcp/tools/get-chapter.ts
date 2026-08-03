@@ -11,6 +11,9 @@ export default defineTool({
   inputSchema: {
     id: z.string().describe("Chapter ID, e.g. 'intro', 'theory', 'story3'."),
   },
+  outputSchema: {
+    chapter: z.object({ id: z.string(), title: z.string(), text: z.string() }),
+  },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: ({ id }) => {
     const chapter = getChapter(id);

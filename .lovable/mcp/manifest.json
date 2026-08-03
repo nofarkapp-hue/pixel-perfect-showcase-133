@@ -26,7 +26,33 @@
           "type": "object",
           "properties": {}
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "chapters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "title"
+                ]
+              }
+            }
+          },
+          "required": [
+            "chapters"
+          ]
+        }
       },
       {
         "name": "get_chapter",
@@ -50,7 +76,34 @@
             "id"
           ]
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "chapter": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "text"
+              ]
+            }
+          },
+          "required": [
+            "chapter"
+          ]
+        }
       },
       {
         "name": "search_content",
@@ -74,7 +127,37 @@
             "query"
           ]
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chapterId": {
+                    "type": "string"
+                  },
+                  "chapterTitle": {
+                    "type": "string"
+                  },
+                  "snippet": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "chapterId",
+                  "chapterTitle",
+                  "snippet"
+                ]
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        }
       }
     ]
   }

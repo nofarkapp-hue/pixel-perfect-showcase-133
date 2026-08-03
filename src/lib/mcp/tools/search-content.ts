@@ -11,6 +11,11 @@ export default defineTool({
   inputSchema: {
     query: z.string().describe("Text to search for (Hebrew or English)."),
   },
+  outputSchema: {
+    results: z.array(
+      z.object({ chapterId: z.string(), chapterTitle: z.string(), snippet: z.string() }),
+    ),
+  },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: ({ query }) => {
     const results = searchChapters(query);
