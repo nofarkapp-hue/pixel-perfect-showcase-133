@@ -1394,7 +1394,27 @@
 
         function saveState() {
             localStorage.setItem('keshva_learner_state_v3', JSON.stringify(state));
+            reportProgressToAccount();
         }
+
+        // Report progress to the signed-in learner account (handled by the parent page).
+        function reportProgressToAccount() {
+            try {
+                if (window.parent === window) return;
+                var completed = Object.keys(state.unlockedTabs || {}).filter(function (k) {
+                    return state.unlockedTabs[k];
+                });
+                window.parent.postMessage({
+                    type: 'hakshava-progress',
+                    completedChapters: completed,
+                    quizScore: (state.quiz && typeof state.quiz.score === 'number') ? state.quiz.score : null,
+                    certificateName: (state.user && state.user.name) ? state.user.name : null
+                }, window.location.origin);
+            } catch (e) {
+                /* progress sync is best-effort */
+            }
+        }
+
 
         // Reset local progress for a new user on a shared device (e.g. tablet at the host stand)
         function resetForNewUser() {

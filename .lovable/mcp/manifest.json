@@ -3,12 +3,16 @@
   "sdk_version": "0.26.1",
   "path": "/mcp",
   "auth": {
-    "type": "none"
+    "type": "oauth",
+    "issuer": "https://cvczwdoduabhixmkeqnp.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
   },
   "mcp": {
     "server": {
       "name": "pixel-perfect-pixel",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Pixel Perfect Pixel"
     },
     "tools": [
@@ -156,6 +160,195 @@
           },
           "required": [
             "results"
+          ]
+        }
+      },
+      {
+        "name": "get_my_progress",
+        "title": "Get my learning progress",
+        "description": "Get the signed-in learner's own progress in the module: completed chapters, quiz score and certificate details.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "progress": {
+              "type": "object",
+              "properties": {
+                "completed_chapters": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "quiz_score": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "certificate_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "certificate_issued_at": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "updated_at": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "completed_chapters",
+                "quiz_score",
+                "certificate_name",
+                "certificate_issued_at"
+              ]
+            }
+          },
+          "required": [
+            "progress"
+          ]
+        }
+      },
+      {
+        "name": "save_my_progress",
+        "title": "Save my learning progress",
+        "description": "Update the signed-in learner's own progress: completed chapter IDs, quiz score, and certificate name. Only fields that are provided are changed.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "completedChapters": {
+              "description": "Chapter IDs the learner has completed.",
+              "maxItems": 50,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              }
+            },
+            "quizScore": {
+              "description": "Quiz score 0-100.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "certificateName": {
+              "description": "Name to print on the certificate.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "progress": {
+              "type": "object",
+              "properties": {
+                "completed_chapters": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "quiz_score": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "certificate_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "certificate_issued_at": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "completed_chapters",
+                "quiz_score",
+                "certificate_name",
+                "certificate_issued_at"
+              ]
+            }
+          },
+          "required": [
+            "progress"
           ]
         }
       }
