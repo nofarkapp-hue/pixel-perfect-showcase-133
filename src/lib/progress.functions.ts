@@ -25,15 +25,19 @@ export const saveMyProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => progressInput.parse(data))
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = { user_id: context.userId };
-    if (data.completedChapters) patch['completed_chapters'] = data.completedChapters;
-    if (data.quizScore !== undefined && data.quizScore !== null) {
-      patch['quiz_score'] = data.quizScore;
-    }
-    if (data.certificateName) {
-      patch['certificate_name'] = data.certificateName;
-      patch['certificate_issued_at'] = new Date().toISOString();
-    }
+    const patch = {
+      user_id: context.userId,
+      ...(data.completedChapters ? { completed_chapters: data.completedChapters } : {}),
+      ...(data.quizScore !== undefined && data.quizScore !== null
+        ? { quiz_score: data.quizScore }
+        : {}),
+      ...(data.certificateName
+        ? {
+            certificate_name: data.certificateName,
+            certificate_issued_at: new Date().toISOString(),
+          }
+        : {}),
+    };
 
     const { error } = await context.supabase
       .from("learner_progress")
