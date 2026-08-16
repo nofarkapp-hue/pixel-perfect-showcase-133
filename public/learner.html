@@ -2212,6 +2212,27 @@
             const certWrap = document.getElementById('certificateContainer');
             certWrap.classList.remove('hidden');
             certWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            reportCompletionToSheet(formattedDate);
+        }
+
+        // Report a successful completion (certificate issued) to the parent page,
+        // which appends a row to the organization's Google Sheet.
+        function reportCompletionToSheet(completionDate) {
+            try {
+                if (window.parent === window) return;
+                window.parent.postMessage({
+                    type: 'hakshava-completion',
+                    name: state.user.name,
+                    email: state.user.email || '',
+                    organization: state.user.business,
+                    role: state.user.role,
+                    completionDate: completionDate,
+                    score: (state.quiz && typeof state.quiz.score === 'number') ? state.quiz.score : 0
+                }, window.location.origin);
+            } catch (e) {
+                /* sheet logging is best-effort */
+            }
         }
 
         // Print function
