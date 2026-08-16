@@ -4,6 +4,7 @@ import type { User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 import { saveMyProgress } from "@/lib/progress.functions";
+import { logCompletionToSheet } from "@/lib/sheets.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
