@@ -34,10 +34,22 @@ type ProgressMessage = {
   certificateName?: string | null;
 };
 
+type CompletionMessage = {
+  type: "hakshava-completion";
+  name?: string;
+  email?: string;
+  organization?: string;
+  role?: string;
+  completionDate?: string;
+  score?: number;
+};
+
 function Index() {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
   const lastPayload = useRef<string>("");
+  const lastCompletion = useRef<string>("");
+
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
