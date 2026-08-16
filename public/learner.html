@@ -2150,6 +2150,9 @@
             if (state.user.name) {
                 document.getElementById('userName').value = state.user.name;
                 document.getElementById('userId').value = state.user.id;
+                if (state.user.email) {
+                    document.getElementById('userEmail').value = state.user.email;
+                }
                 document.getElementById('userBusiness').value = state.user.business;
                 document.getElementById('userRole').value = state.user.role;
                 if(state.user.startDate) {
