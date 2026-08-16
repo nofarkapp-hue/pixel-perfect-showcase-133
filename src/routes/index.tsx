@@ -4,6 +4,7 @@ import type { User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 import { saveMyProgress } from "@/lib/progress.functions";
+import { logCompletionToSheet } from "@/lib/sheets.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,10 +34,22 @@ type ProgressMessage = {
   certificateName?: string | null;
 };
 
+type CompletionMessage = {
+  type: "hakshava-completion";
+  name?: string;
+  email?: string;
+  organization?: string;
+  role?: string;
+  completionDate?: string;
+  score?: number;
+};
+
 function Index() {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
   const lastPayload = useRef<string>("");
+  const lastCompletion = useRef<string>("");
+
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -74,6 +87,35 @@ function Index() {
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, [user]);
+
+  useEffect(() => {
+    function onCompletion(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data as CompletionMessage | undefined;
+      if (!data || data.type !== "hakshava-completion") return;
+      if (!data.name || !data.organization || !data.role || !data.completionDate) return;
+
+      const payload = {
+        name: data.name,
+        email: data.email ?? "",
+        organization: data.organization,
+        role: data.role,
+        completionDate: data.completionDate,
+        score: typeof data.score === "number" ? data.score : 0,
+      };
+      const signature = JSON.stringify(payload);
+      if (signature === lastCompletion.current) return;
+      lastCompletion.current = signature;
+      void logCompletionToSheet({ data: payload }).catch(() => {
+        /* sheet logging is best-effort */
+      });
+    }
+
+    window.addEventListener("message", onCompletion);
+    return () => window.removeEventListener("message", onCompletion);
+  }, []);
+
+
 
   async function signOut() {
     await supabase.auth.signOut();
