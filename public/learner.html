@@ -2216,12 +2216,12 @@
             certWrap.classList.remove('hidden');
             certWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-            reportCompletionToSheet(formattedDate);
+            reportCompletionToSheet(formattedDate, formattedStart);
         }
 
         // Report a successful completion (certificate issued) to the parent page,
         // which appends a row to the organization's Google Sheet.
-        function reportCompletionToSheet(completionDate) {
+        function reportCompletionToSheet(completionDate, workStartDate) {
             try {
                 if (window.parent === window) return;
                 window.parent.postMessage({
@@ -2230,8 +2230,14 @@
                     email: state.user.email || '',
                     organization: state.user.business,
                     role: state.user.role,
+                    workStartDate: workStartDate || '',
                     completionDate: completionDate,
-                    score: (state.quiz && typeof state.quiz.score === 'number') ? state.quiz.score : 0
+                    score: (state.quiz && typeof state.quiz.score === 'number') ? state.quiz.score : 0,
+                    bizQ1: state.bizQ1 || '',
+                    bizQ2: state.bizQ2 || '',
+                    bizQ3: state.bizQ3 || '',
+                    bizQ4: state.bizQ4 || '',
+                    bizQ5: state.bizQ5 || ''
                 }, window.location.origin);
             } catch (e) {
                 /* sheet logging is best-effort */
