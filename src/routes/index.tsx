@@ -40,8 +40,14 @@ type CompletionMessage = {
   email?: string;
   organization?: string;
   role?: string;
+  workStartDate?: string;
   completionDate?: string;
   score?: number;
+  bizQ1?: string;
+  bizQ2?: string;
+  bizQ3?: string;
+  bizQ4?: string;
+  bizQ5?: string;
 };
 
 function Index() {
