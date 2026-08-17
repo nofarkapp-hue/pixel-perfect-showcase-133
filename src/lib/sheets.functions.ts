@@ -5,13 +5,21 @@ const SPREADSHEET_ID = "14u3HN9_KKstZzWn3daNivHobBlFMr32lDbY8UDfh0Aw";
 const SHEET_TAB = "Completions";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_sheets/v4";
 
+const answer = z.string().trim().max(2000).optional().default("");
+
 const completionInput = z.object({
   name: z.string().trim().min(1).max(120),
   email: z.string().trim().email().max(160).or(z.literal("")),
   organization: z.string().trim().min(1).max(160),
   role: z.string().trim().min(1).max(120),
+  workStartDate: z.string().trim().max(40).optional().default(""),
   completionDate: z.string().trim().min(1).max(40),
   score: z.number().min(0).max(7),
+  bizQ1: answer,
+  bizQ2: answer,
+  bizQ3: answer,
+  bizQ4: answer,
+  bizQ5: answer,
 });
 
 export const logCompletionToSheet = createServerFn({ method: "POST" })
@@ -24,7 +32,7 @@ export const logCompletionToSheet = createServerFn({ method: "POST" })
       return { ok: false as const };
     }
 
-    const url = `${GATEWAY_URL}/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_TAB}!A:F:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+    const url = `${GATEWAY_URL}/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_TAB}!A:L:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -40,8 +48,14 @@ export const logCompletionToSheet = createServerFn({ method: "POST" })
             data.email,
             data.organization,
             data.role,
+            data.workStartDate,
             data.completionDate,
             `${data.score}/7`,
+            data.bizQ1,
+            data.bizQ2,
+            data.bizQ3,
+            data.bizQ4,
+            data.bizQ5,
           ],
         ],
       }),
