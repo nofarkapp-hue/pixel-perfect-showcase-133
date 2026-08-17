@@ -106,8 +106,14 @@ function Index() {
         email: data.email ?? "",
         organization: data.organization,
         role: data.role,
+        workStartDate: data.workStartDate ?? "",
         completionDate: data.completionDate,
         score: typeof data.score === "number" ? data.score : 0,
+        bizQ1: data.bizQ1 ?? "",
+        bizQ2: data.bizQ2 ?? "",
+        bizQ3: data.bizQ3 ?? "",
+        bizQ4: data.bizQ4 ?? "",
+        bizQ5: data.bizQ5 ?? "",
       };
       const signature = JSON.stringify(payload);
       if (signature === lastCompletion.current) return;
